@@ -49,7 +49,7 @@ var ui = (function(document, search){
     searchResults.appendChild(li)
   }
 
-  searchBox.onchange = function() {
+  searchBox.onkeyup = function() {
     clearResults()
     var results = search(searchBox.value)
     if (!results || !results.length) {
