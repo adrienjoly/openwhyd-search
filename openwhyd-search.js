@@ -52,7 +52,11 @@ var ui = (function(document, search){
   searchBox.onchange = function() {
     clearResults()
     var results = search(searchBox.value)
-    results.forEach(appendResult)
+    if (!results || !results.length) {
+      appendResult({ name: '(no results)' })
+    } else {
+      results.forEach(appendResult)
+    }
   }
 
 })(document, search)
