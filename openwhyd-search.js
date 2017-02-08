@@ -28,13 +28,6 @@ function search(query) {
   return results
 }
 
-// LOAD PROFILE DATA FROM OPENWHYD
-
-window[callbackFctName] = indexTracks
-var script = document.createElement('script')
-script.src = profileUrl
-document.body.appendChild(script)
-
 // UI INIT
 
 var ui = (function(document, search){
@@ -65,4 +58,21 @@ var ui = (function(document, search){
     }
   }
 
+  return {
+    clearResults: clearResults,
+    appendResult: appendResult,
+  }
+
 })(document, search)
+
+// LOAD PROFILE DATA FROM OPENWHYD
+
+ui.appendResult({ name: '(loading tracks from openwhyd...)' })
+window[callbackFctName] = function(json) {
+  indexTracks(json)
+  ui.clearResults()
+  ui.appendResult({ name: '(loaded ' + allTracks.length + ' tracks from openwhyd! ^^)' })
+}
+var script = document.createElement('script')
+script.src = profileUrl
+document.body.appendChild(script)
