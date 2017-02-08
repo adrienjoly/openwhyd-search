@@ -4,22 +4,28 @@ var profileUrl = 'https://openwhyd.org/' + username +'?limit=99999&callback=' + 
 
 // DATA MODEL
 
-var trackIndex = {}
-
-function search(term) {
-  console.log('query:', term)
-  var results = trackIndex[term]
-  return results || []
-}
+var allTracks = []
 
 function indexTracks(tracks) {
   console.log('loaded', tracks.length, 'tracks')
-  tracks.forEach((track) => {
-    var words = track.name.toLowerCase().split(' ')
-    words.forEach((word) => {
-      trackIndex[word] = (trackIndex[word] || []).concat([ track ])
+  allTracks = tracks.map((tr) => Object.defineProperty(tr, '_name', {
+    value: tr.name.toLowerCase() // pre-compute and store normalized name (for faster search)
+  }))
+}
+
+function search(query) {
+  var results = []
+  query = query.trim().toLowerCase() // normalize search query
+  var terms = !query ? [] : query.split(' ')
+  console.log('query terms:', terms)
+  if (terms.length) {
+    results = allTracks.slice() // clone array of tracks
+    terms.forEach(function(term) {
+      // exclude results which name do not contain this term
+      results = results.filter((res) => res._name.indexOf(term) !== -1)
     })
-  })
+  }
+  return results
 }
 
 // LOAD PROFILE DATA FROM OPENWHYD
