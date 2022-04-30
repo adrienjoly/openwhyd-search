@@ -10,7 +10,7 @@ function indexTracks(tracks) {
   console.log('loaded', tracks.length, 'tracks')
   allTracks = tracks.map((tr) => ({
     ...tr,
-    _name: tr.name.toLowerCase() // pre-compute and store normalized name (for faster search)
+    _name: [tr.name, tr.text].join(" ").toLowerCase() // pre-compute and store normalized post name & description (for faster search)
   }))
 }
 
