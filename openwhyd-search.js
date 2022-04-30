@@ -8,8 +8,9 @@ var allTracks = []
 
 function indexTracks(tracks) {
   console.log('loaded', tracks.length, 'tracks')
-  allTracks = tracks.map((tr) => Object.defineProperty(tr, '_name', {
-    value: tr.name.toLowerCase() // pre-compute and store normalized name (for faster search)
+  allTracks = tracks.map((tr) => ({
+    ...tr,
+    _name: tr.name.toLowerCase() // pre-compute and store normalized name (for faster search)
   }))
 }
 
@@ -18,14 +19,14 @@ function search(query) {
   query = query.trim().toLowerCase() // normalize search query
   var terms = !query ? [] : query.split(' ')
   console.log('query terms:', terms)
-  if (terms.length) {
-    results = allTracks.slice() // clone array of tracks
-    terms.forEach(function(term) {
-      // exclude results which name do not contain this term
-      results = results.filter((res) => res._name.indexOf(term) !== -1)
-    })
+  if (!terms.length) {
+    return []
   }
-  return results
+  return terms.reduce(
+    // exclude results which name do not contain this term
+    (results, term) => results.filter((res) => res._name.indexOf(term) !== -1),
+    allTracks
+  )
 }
 
 // UI INIT
